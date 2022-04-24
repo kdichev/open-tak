@@ -3,22 +3,56 @@ import { Map, Marker } from "pigeon-maps";
 import {
   ApolloClient,
   InMemoryCache,
+  createHttpLink,
+  split,
   ApolloProvider,
-  useQuery,
   gql,
   useMutation,
+  useQuery,
+  useSubscription,
 } from "@apollo/client";
 
-const client = new ApolloClient({
+import fetch from "isomorphic-fetch";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
+import isNode from "is-node";
+import ws from "ws";
+
+const wsLink = new WebSocketLink({
+  uri: "wss://opentak.herokuapp.com/v1/graphql",
+  options: {
+    reconnect: true,
+  },
+  webSocketImpl: isNode ? ws : null,
+});
+
+const httpLink = createHttpLink({
   uri: "https://opentak.herokuapp.com/v1/graphql",
+  fetch,
+});
+
+const link = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
+  },
+  wsLink,
+  httpLink
+);
+
+export const client = new ApolloClient({
+  link: link,
   cache: new InMemoryCache(),
 });
 
 const IndexPage = () => {
   const [userId, setUserId] = React.useState(null);
-  const { data, loading, error } = useQuery(
+  const { data, loading, error } = useSubscription(
     gql`
-      query MyQuery($user_id: uuid!) {
+      subscription MyQuery($user_id: uuid!) {
         user_location(
           order_by: { created_at: desc }
           limit: 1

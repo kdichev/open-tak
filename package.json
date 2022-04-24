@@ -11,6 +11,8 @@
     "@apollo/client": "^3.5.10",
     "@ionic/react-hooks": "^0.0.8",
     "gatsby": "^4.12.1",
+    "is-node": "^1.0.2",
+    "isomorphic-fetch": "^3.0.0",
     "pigeon-maps": "^0.21.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
