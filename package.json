@@ -8,6 +8,7 @@
     "start": "gatsby develop"
   },
   "dependencies": {
+    "@apollo/client": "^3.5.10",
     "@ionic/react-hooks": "^0.0.8",
     "gatsby": "^4.12.1",
     "pigeon-maps": "^0.21.0",
