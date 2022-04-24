@@ -1,0 +1,17 @@
+{
+  "name": "open-tak",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "kdichev <konstantin.dichev@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "gatsby develop"
+  },
+  "dependencies": {
+    "gatsby": "^4.12.1",
+    "pigeon-maps": "^0.21.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-use-geolocation": "^0.1.1"
+  }
+}
