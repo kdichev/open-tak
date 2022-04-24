@@ -87,8 +87,8 @@ const IndexPage = () => {
   `);
 
   React.useEffect(() => {
-    navigator.geolocation.watchPosition((position) => {
-      if (userId) {
+    userId &&
+      navigator.geolocation.watchPosition((position) => {
         addNewUserLocation({
           variables: {
             latitude: position.coords.latitude,
@@ -96,9 +96,8 @@ const IndexPage = () => {
             user_id: userId,
           },
         });
-      }
-    });
-  }, []);
+      });
+  }, [userId]);
 
   return (
     <div>
