@@ -48,8 +48,7 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const IndexPage = () => {
-  const [userId, setUserId] = React.useState(null);
+const IndexPage = ({ userId }) => {
   const { data, loading, error } = useSubscription(
     gql`
       subscription MyQuery($user_id: uuid!) {
@@ -87,28 +86,21 @@ const IndexPage = () => {
   `);
 
   React.useEffect(() => {
-    userId &&
-      navigator.geolocation.watchPosition((position) => {
-        addNewUserLocation({
-          variables: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            user_id: userId,
-          },
-        });
+    navigator.geolocation.watchPosition((position) => {
+      addNewUserLocation({
+        variables: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          user_id: userId,
+        },
       });
-  }, [userId]);
+    });
+  }, []);
 
   return (
     <div>
       <p>{data?.user_location[0].latitude}</p>
       <p>{data?.user_location[0].longitude}</p>
-      <input
-        type="text"
-        onChange={(e) => {
-          setUserId(e.target.value);
-        }}
-      />
       <br />
       <br />
       {data?.user_location[0].latitude && data?.user_location[0].longitude && (
@@ -133,10 +125,19 @@ const IndexPage = () => {
   );
 };
 
-const BasePage = (props) => (
-  <ApolloProvider client={client}>
-    <IndexPage {...props} />
-  </ApolloProvider>
-);
+const BasePage = (props) => {
+  const [userId, setUserId] = React.useState(null);
+  return (
+    <ApolloProvider client={client}>
+      <input
+        type="text"
+        onChange={(e) => {
+          setUserId(e.target.value);
+        }}
+      />
+      {userId && <IndexPage {...props} userId={userId} />}
+    </ApolloProvider>
+  );
+};
 
 export default BasePage;
